@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mental Health Checker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #E0EAFC 0%, #CFDEF3 100%);
+            min-height: 100vh;
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-input {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: linear-gradient(to right, #4F46E5, #818CF8);
+            outline: none;
+            margin: 1rem 0;
+        }
+
+        .slide-input::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #4F46E5;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sleep-slider {
+            background: linear-gradient(to right, #1E3A8A, #FEF3C7);
+        }
+
+        .coping-btn {
+            transition: all 0.3s ease;
+        }
+
+        .coping-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .selected {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px #4F46E5;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #E2E8F0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4F46E5;
+            transition: width 0.3s ease;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="gradient-bg">
+    <div class="container mx-auto max-w-3xl px-4 py-8">
+        <!-- Progress Bar -->
+        <div class="mb-6">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <p class="text-center text-sm mt-2 text-gray-600" id="progress-text">Step 1 of 6</p>
+        </div>
+
+        <!-- Step 1: Welcome -->
+        <div id="step1" class="fade-in bg-white rounded-3xl shadow-xl p-6 md:p-12">
+            <div class="text-center">
+                <img src="logo.png" alt="Welcome" class="mx-auto mb-6 rounded-full">
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Welcome to Your Mental Health Check-in</h1>
+                <p class="text-xl text-gray-600 mb-6">Let's take a moment to understand how you're feeling today.</p>
+                <button onclick="nextStep()" class="bg-indigo-600 text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-indigo-700 transition-colors w-full md:w-auto">
+                    Begin Assessment
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 2: Quick Mental Health Quiz -->
+        <div id="step2" class="fade-in bg-white rounded-3xl shadow-xl p-6 md:p-12 hidden">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-8">Quick Mental Health Check</h2>
+            <div class="space-y-8">
+                <div class="quiz-item">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-2">😓</span>
+                        <p class="text-lg">How often do you feel overwhelmed?</p>
+                    </div>
+                    <input type="range" min="1" max="5" value="3" class="slide-input" onchange="updateQuiz(this, 'overwhelmed')">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Never</span>
+                        <span>Sometimes</span>
+                        <span>Always</span>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-2">😴</span>
+                        <p class="text-lg">Do you have trouble sleeping?</p>
+                    </div>
+                    <input type="range" min="1" max="5" value="3" class="slide-input" onchange="updateQuiz(this, 'sleep')">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Never</span>
+                        <span>Sometimes</span>
+                        <span>Always</span>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-2">🎯</span>
+                        <p class="text-lg">Do you find it hard to focus?</p>
+                    </div>
+                    <input type="range" min="1" max="5" value="3" class="slide-input" onchange="updateQuiz(this, 'focus')">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Never</span>
+                        <span>Sometimes</span>
+                        <span>Always</span>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-2">🎭</span>
+                        <p class="text-lg">How often do you experience mood swings?</p>
+                    </div>
+                    <input type="range" min="1" max="5" value="3" class="slide-input" onchange="updateQuiz(this, 'moodSwings')">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Never</span>
+                        <span>Sometimes</span>
+                        <span>Always</span>
+                    </div>
+                </div>
+
+                <div class="quiz-item">
+                    <div class="flex items-center mb-2">
+                        <span class="text-2xl mr-2">🤝</span>
+                        <p class="text-lg">Do you feel supported emotionally?</p>
+                    </div>
+                    <input type="range" min="1" max="5" value="3" class="slide-input" onchange="updateQuiz(this, 'support')">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Not at all</span>
+                        <span>Somewhat</span>
+                        <span>Very much</span>
+                    </div>
+                </div>
+            </div>
+            <button onclick="nextStep()" class="mt-8 bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-indigo-700 transition-colors w-full">
+                Continue
+            </button>
+        </div>
+
+        <!-- Step 3: Stress Assessment -->
+        <div id="step3" class="fade-in bg-white rounded-3xl shadow-xl p-6 md:p-12 hidden">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-8">How does a busy workday make you feel?</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="selectStress('Calm', this)" class="stress-btn p-6 rounded-xl bg-green-50 hover:bg-green-100 transition-colors text-center">
+                    
+                    <span class="text-2xl block mb-2">😌</span>
+                    <p>Calm</p>
+                </button>
+                <button onclick="selectStress('Slightly Stressed', this)" class="stress-btn p-6 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition-colors text-center">
+                   
+                    <span class="text-2xl block mb-2">😅</span>
+                    <p>Slightly Stressed</p>
+                </button>
+                <button onclick="selectStress('Very Stressed', this)" class="stress-btn p-6 rounded-xl bg-orange-50 hover:bg-orange-100 transition-colors text-center">
+                   
+                    <span class="text-2xl block mb-2">😩</span>
+                    <p>Very Stressed</p>
+                </button>
+                <button onclick="selectStress('Overwhelmed', this)" class="stress-btn p-6 rounded-xl bg-red-50 hover:bg-red-100 transition-colors text-center">
+                    
+                    <span class="text-2xl block mb-2">😰</span>
+                    <p>Overwhelmed</p>
+                </button>
+            </div>
+        </div>
+
+        <!-- Step 4: Sleep & Energy -->
+        <div id="step4" class="fade-in bg-white rounded-3xl shadow-xl p-6 md:p-12 hidden">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-8">Sleep & Energy Check</h2>
+            <div class="space-y-8">
+                <div>
+                    <p class="text-lg mb-4">How well did you sleep last night?</p>
+                    <input type="range" min="0" max="10" value="5" class="slide-input sleep-slider" onchange="updateSleep(this)">
+                    <div class="flex justify-between text-sm text-gray-600">
+                        <span>Poor</span>
+                        <span>Average</span>
+                        <span>Excellent</span>
+                    </div>
+                </div>
+                <div>
+                    <p class="text-lg mb-4">How's your energy level today?</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <button onclick="selectEnergy('Energetic', this)" class="energy-btn p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-colors text-center">
+                            <span class="text-2xl block">⚡</span>
+                            <p>Energetic</p>
+                        </button>
+                        <button onclick="selectEnergy('Normal', this)" class="energy-btn p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors text-center">
+                            <span class="text-2xl block">😊</span>
+                            <p>Normal</p>
+                        </button>
+                        <button onclick="selectEnergy('Tired', this)" class="energy-btn p-4 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition-colors text-center">
+                            <span class="text-2xl block">😴</span>
+                            <p>Tired</p>
+                        </button>
+                        <button onclick="selectEnergy('Drained', this)" class="energy-btn p-4 rounded-xl bg-red-50 hover:bg-red-100 transition-colors text-center">
+                            <span class="text-2xl block">😫</span>
+                            <p>Drained</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button onclick="nextStep()" class="mt-8 bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-indigo-700 transition-colors w-full">
+                Continue
+            </button>
+        </div>
+
+        <!-- Step 5: Coping Mechanisms -->
+        <div id="step5" class="fade-in bg-white rounded-3xl shadow-xl p-6 md:p-12 hidden">
+            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 text-center mb-8">What helps you cope with stress?</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+                <button onclick="selectCoping('Talking', this)" class="coping-btn p-4 rounded-xl bg-purple-50 hover:bg-purple-100 transition-colors text-center">
+                    <span class="text-2xl block">💭</span>
+                    <p>Talking</p>
+                </button>
+                <button onclick="selectCoping('Music', this)" class="coping-btn p-4 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors text-center">
+                    <span class="text-2xl block">🎵</span>
+                    <p>Music</p>
+                </button>
+                <button onclick="selectCoping('Journaling', this)" class="coping-btn p-4 rounded-xl bg-yellow-50 hover:bg-yellow-100 transition-colors text-center">
+                    <span class="text-2xl block">📝</span>
+                    <p>Journaling</p>
+                </button>
+                <button onclick="selectCoping('Exercise', this)" class="coping-btn p-4 rounded-xl bg-green-50 hover:bg-green-100 transition-colors text-center">
+                    <span class="text-2xl block">🏃</span>
+                    <p>Exercise</p>
+                </button>
+                <button onclick="selectCoping('Sleep', this)" class="coping-btn p-4 rounded-xl bg-indigo-50 hover:bg-indigo-100 transition-colors text-center">
+                    <span class="text-2xl block">😴</span>
+                    <p>Sleep</p>
+                </button>
+                <button onclick="selectCoping('None', this)" class="coping-btn p-4 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-center">
+                    <span class="text-2xl block">❌</span>
+                    <p>None</p>
+                </button>
+            </div>
+            <div class="space-y-4">
+                <p class="text-lg">How supported do you feel in your daily life?</p>
+                <input type="range" min="1" max="10" value="5" class="slide-input" onchange="updateSupport(this)">
+                <div class="flex justify-between text-sm text-gray-600">
+                    <span>Not supported</span>
+                    <span>Somewhat</span>
+                    <span>Very supported</span>
+                </div>
+            </div>
+            <button onclick="nextStep()" class="mt-8 bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-indigo-700 transition-colors w-full">
+                See Results
+            </button>
+        </div>
+
+        <!-- Step 6: Results -->
+        <div id="step6" class="fade-in bg-white rounded-3xl shadow-xl p-6 md:p-12 hidden">
+            <div class="text-center">
+                <img src="/Blog Writing Illustration.jpeg" alt="Results" class="mx-auto mb-6 rounded-full">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-4">Your Wellness Assessment</h2>
+                <div class="text-5xl font-bold text-indigo-600 mb-4" id="score-display">--%</div>
+                <p class="text-xl text-gray-600 mb-8" id="result-message"></p>
+                <div class="space-y-4">
+                    <button onclick="restartAssessment()" class="bg-indigo-600 text-white px-8 py-3 rounded-full text-lg font-semibold hover:bg-indigo-700 transition-colors w-full">
+                        Take Again
+                    </button>
+                    <button class="bg-white text-indigo-600 px-8 py-3 rounded-full text-lg font-semibold border-2 border-indigo-600 hover:bg-indigo-50 transition-colors w-full">
+                        View Resources
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 6;
+        const userResponses = {
+            mentalHealth: {
+                overwhelmed: 3,
+                sleep: 3,
+                focus: 3,
+                moodSwings: 3,
+                support: 3
+            },
+            stress: null,
+            sleepQuality: 5,
+            energy: null,
+            copingMechanism: null,
+            supportLevel: 5
+        };
+
+        // Update progress bar
+        function updateProgress(step) {
+            const progress = (step - 1) / (totalSteps - 1) * 100;
+            document.getElementById('progress-fill').style.width = `${progress}%`;
+            document.getElementById('progress-text').textContent = `Step ${step} of ${totalSteps}`;
+        }
+
+        // Show specific step
+        function showStep(step) {
+            document.querySelectorAll('[id^="step"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            const currentStepElement = document.getElementById(`step${step}`);
+            if (currentStepElement) {
+                currentStepElement.classList.remove('hidden');
+                currentStepElement.classList.add('fade-in');
+            }
+            
+            updateProgress(step);
+        }
+
+        // Move to next step
+        function nextStep() {
+            if (!validateStep(currentStep)) {
+                return;
+            }
+
+            if (currentStep < totalSteps) {
+                currentStep++;
+                showStep(currentStep);
+            }
+
+            if (currentStep === totalSteps) {
+                calculateAndDisplayResults();
+            }
+        }
+
+        // Validate current step
+        function validateStep(step) {
+            switch(step) {
+                case 3: // Stress step
+                    if (!userResponses.stress) {
+                        alert('Please select your stress level to continue.');
+                        return false;
+                    }
+                    break;
+                case 4: // Energy step
+                    if (!userResponses.energy) {
+                        alert('Please select your energy level to continue.');
+                        return false;
+                    }
+                    break;
+                case 5: // Coping step
+                    if (!userResponses.copingMechanism) {
+                        alert('Please select a coping mechanism to continue.');
+                        return false;
+                    }
+                    break;
+            }
+            return true;
+        }
+
+        // Update quiz responses
+        function updateQuiz(element, category) {
+            userResponses.mentalHealth[category] = parseInt(element.value);
+        }
+
+        // Select stress level
+        function selectStress(level, element) {
+            userResponses.stress = level;
+            
+            document.querySelectorAll('.stress-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+            
+            setTimeout(() => nextStep(), 500);
+        }
+
+        // Update sleep quality
+        function updateSleep(element) {
+            userResponses.sleepQuality = parseInt(element.value);
+            // Update background gradient based on sleep quality
+            element.style.background = `linear-gradient(to right, #1E3A8A ${element.value * 10}%, #FEF3C7)`;
+        }
+
+        // Select energy level
+        function selectEnergy(level, element) {
+            userResponses.energy = level;
+            
+            document.querySelectorAll('.energy-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+        }
+
+        // Select coping mechanism
+        function selectCoping(mechanism, element) {
+            userResponses.copingMechanism = mechanism;
+            
+            document.querySelectorAll('.coping-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            element.classList.add('selected');
+        }
+
+        // Update support level
+        function updateSupport(element) {
+            userResponses.supportLevel = parseInt(element.value);
+        }
+
+        // Calculate wellness score
+        function calculateWellnessScore() {
+            let score = 0;
+            
+            // Mental health score (0-25 points)
+            const mentalHealthScore = Object.values(userResponses.mentalHealth)
+                .reduce((acc, val) => acc + (6 - val) * 1, 0);
+            score += mentalHealthScore;
+            
+            // Stress score (0-20 points)
+            const stressScores = {
+                'Calm': 20,
+                'Slightly Stressed': 15,
+                'Very Stressed': 10,
+                'Overwhelmed': 5
+            };
+            score += stressScores[userResponses.stress] || 0;
+            
+            // Sleep quality score (0-20 points)
+            score += userResponses.sleepQuality * 2;
+            
+            // Energy score (0-20 points)
+            const energyScores = {
+                'Energetic': 20,
+                'Normal': 15,
+                'Tired': 10,
+                'Drained': 5
+            };
+            score += energyScores[userResponses.energy] || 0;
+            
+            // Support level score (0-15 points)
+            score += userResponses.supportLevel * 1.5;
+            
+            // Convert to percentage
+            return Math.min(Math.round(score), 100);
+        }
+
+        // Calculate and display results
+        function calculateAndDisplayResults() {
+            const score = calculateWellnessScore();
+            const scoreDisplay = document.getElementById('score-display');
+            const resultMessage = document.getElementById('result-message');
+            
+            let currentDisplay = 0;
+            const interval = setInterval(() => {
+                currentDisplay += 1;
+                scoreDisplay.textContent = `${currentDisplay}%`;
+                if (currentDisplay >= score) {
+                    clearInterval(interval);
+                }
+            }, 20);
+
+            if (score >= 70) {
+                resultMessage.textContent = "Your mental well-being is strong! Keep maintaining these healthy habits and continue prioritizing self-care.";
+            } else if (score >= 60) {
+                resultMessage.textContent = "You're doing okay, but there’s room for improvement. Try incorporating more self-care practices and reach out to loved ones for support when needed.";
+            } else if (score >= 50) {
+                resultMessage.textContent = "It looks like you may be facing some challenges. Consider talking to someone you trust or practicing mindfulness and relaxation techniques.";
+            } else {
+                resultMessage.textContent = "Your well-being needs attention. You're not alone—consider reaching out to a mental health professional or someone you trust for support. Help is always available.";
+            }
+
+        }
+
+        // Restart assessment
+        function restartAssessment() {
+            userResponses.mentalHealth = {
+                overwhelmed: 3,
+                sleep: 3,
+                focus: 3,
+                moodSwings: 3,
+                support: 3
+            };
+            userResponses.stress = null;
+            userResponses.sleepQuality = 5;
+            userResponses.energy = null;
+            userResponses.copingMechanism = null;
+            userResponses.supportLevel = 5;
+            
+            currentStep = 1;
+            showStep(1);
+            
+            document.querySelectorAll('.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            showStep(1);
+        });
+    </script>
+</body>
+</html>
